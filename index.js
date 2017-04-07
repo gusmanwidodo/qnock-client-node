@@ -14,7 +14,7 @@ var qnock = {
         this.secret = options.secret;
         this.fcm = options.fcm;
 
-        // this.getToken();
+        this.getToken();
     },
 
     getToken: function () {
@@ -32,23 +32,32 @@ var qnock = {
 
         this.token = result.DATA;
 
-        console.log(this.token);
+        // console.log(this.token);
 
     }).auth(this.id, this.secret, false);
 
     },
 
-    postRequest: function (options) {
+    send: function (url, formdata, post = "POST") {
+
+        formdata.token = this.token;
+        formdata.app_secret = this.secret;
+
+        var options = {
+            url: this.host + url,
+            method: post,
+            form: formdata
+        };
 
         request(options, (error, response, body) => {
 
             if (error) throw new Error(error);
 
-        result = JSON.parse(body);
+            result = JSON.parse(body);
 
-        return result;
+            return result;
 
-    }).auth(this.id, this.secret, false);
+        }).auth(this.id, this.secret, false);
 
     }
 
