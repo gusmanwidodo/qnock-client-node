@@ -1,6 +1,6 @@
 {
   "name": "qnock-client",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "SDK for qnock push notification",
   "main": "index.js",
   "scripts": {

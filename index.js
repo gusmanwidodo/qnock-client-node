@@ -21,7 +21,7 @@ var qnock = {
 
         var options = {
             method: 'POST',
-            url: this.url.token
+            url: this.host + "token"
         };
 
         request(options, (error, response, body) => {
