@@ -1,0 +1,22 @@
+{
+  "name": "qnock-client",
+  "version": "1.0.0",
+  "description": "SDK for qnock push notification",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/gusmanwidodo/qnock-client-node.git"
+  },
+  "keywords": [
+    "qnock"
+  ],
+  "author": "gusman@codigo.id",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/gusmanwidodo/qnock-client-node/issues"
+  },
+  "homepage": "https://github.com/gusmanwidodo/qnock-client-node#readme"
+}
