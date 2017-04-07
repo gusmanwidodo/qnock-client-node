@@ -1,65 +1,67 @@
+/**
+ * Qnock Client
+ * author: gusman@codigo.id
+ */
+
 var request = require("request");
 
-var qnock = {
+function qnock (options) {
 
-    host: "",
-    id: "",
-    secret: "",
-    fcm: "",
-    token: "",
+    this.host = options.host;
+    this.id = options.id;
+    this.secret = options.secret;
+    this.fcm = options.fcm;
 
-    config: function (options) {
-        this.host = options.host;
-        this.id = options.id;
-        this.secret = options.secret;
-        this.fcm = options.fcm;
-
-        this.getToken();
-    },
-
-    getToken: function () {
+    this.getToken = function (cb) {
 
         var options = {
             method: 'POST',
             url: this.host + "token"
         };
 
-        request(options, (error, response, body) => {
-
-            if (error) throw new Error(error);
-
-        result = JSON.parse(body);
-
-        this.token = result.DATA;
-
-        // console.log(this.token);
-
-    }).auth(this.id, this.secret, false);
-
-    },
-
-    send: function (url, formdata, post = "POST") {
-
-        formdata.token = this.token;
-        formdata.app_secret = this.secret;
-
-        var options = {
-            url: this.host + url,
-            method: post,
-            form: formdata
-        };
-
-        request(options, (error, response, body) => {
+        function callback(error, response, body) {
 
             if (error) throw new Error(error);
 
             result = JSON.parse(body);
 
-            return result;
+            cb(result.DATA);
 
-        }).auth(this.id, this.secret, false);
+        }
 
-    }
+        request(options, callback).auth(this.id, this.secret, true);
+
+    };
+
+    this.send = function (url, formdata = {}, post = "POST") {
+
+        var _this = this;
+
+        this.getToken(function (token) {
+
+            formdata.token = token;
+            formdata.app_secret = _this.secret;
+
+            var options = {
+                url: _this.host + url,
+                method: post,
+                body: JSON.stringify(formdata),
+                headers: { "content-type": "application/json"}
+            };
+
+            request(options, function (error, response, body) {
+
+                if (error) throw new Error(error);
+
+                result = JSON.parse(body);
+
+                console.log("notif send!");
+
+            }).auth(_this.id, _this.secret, false);
+
+        });
+
+    };
 
 }
 
