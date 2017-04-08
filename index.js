@@ -57,6 +57,8 @@ function qnock (options) {
 
                 console.log("notif send!");
 
+                console.log(result);
+
             }).auth(_this.id, _this.secret, false);
 
         });
