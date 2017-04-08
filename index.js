@@ -3,69 +3,85 @@
  * author: gusman@codigo.id
  */
 
-var request = require("request");
+const request = require("request")
 
-function qnock (options) {
+const qnock = (options) => {
 
-    this.host = options.host;
-    this.id = options.id;
-    this.secret = options.secret;
-    this.fcm = options.fcm;
-
-    this.getToken = function (cb) {
+    const getToken = (cb) => {
 
         var options = {
             method: 'POST',
-            url: this.host + "token"
-        };
-
-        function callback(error, response, body) {
-
-            if (error) throw new Error(error);
-
-            result = JSON.parse(body);
-
-            cb(result.DATA);
-
+            url: options.host + "token"
         }
 
-        request(options, callback).auth(this.id, this.secret, true);
+        const callback = (error, response, body) => {
 
-    };
+            if (error) throw new Error(error)
 
-    this.send = function (url, formdata = {}, post = "POST") {
+            result = JSON.parse(body)
 
-        var _this = this;
+            cb(result.DATA)
+        }
 
-        this.getToken(function (token) {
+        request(options, callback).auth(options.id, options.secret, true)
+    }
 
-            formdata.token = token;
-            formdata.app_secret = _this.secret;
+    return {
 
-            var options = {
-                url: _this.host + url,
-                method: post,
-                body: JSON.stringify(formdata),
-                headers: { "content-type": "application/json"}
-            };
+        send: (url, formdata = {}, post = "POST") => {
 
-            request(options, function (error, response, body) {
+            getToken(token => {
 
-                if (error) throw new Error(error);
+                formdata.token = token
 
-                result = JSON.parse(body);
+                formdata.app_secret = options.secret
 
-                console.log("notif send!");
+                var requestOptions = {
+                    url: options.host + url,
+                    method: post,
+                    body: JSON.stringify(formdata),
+                    headers: { "content-type": "application/json" }
+                }
 
-                console.log(result);
+                return Promise((resolve, reject) => {
 
-            }).auth(_this.id, _this.secret, false);
+                    request(requestOptions, (error, response, body) => {
 
-        });
+                        if (error) {
+                            reject(new Error(error))
+                            return
+                        }
 
-    };
+                        result = JSON.parse(body)
 
+                        console.log("notif send!")
+
+                        resolve(result)
+
+                    }).auth(options.id, options.secret, false)
+                })
+            })
+        }
+    }
 }
 
-if (typeof module !== 'undefined' && module.exports)
-    module.exports = qnock;
+
+module.exports = qnock
+
+
+
+//
+
+// pemakaian
+
+const qnock = require('./index')
+
+const qnockObject = qnock(options)
+
+qnockObject
+    .send('http://somedomain.com/some/url', {}, 'POST')
+    .then(result => {
+        console.log(result)
+    }, error => {
+        console.log(error)
+    })
