@@ -37,29 +37,36 @@ function qnock (options) {
 
         var _this = this;
 
-        this.getToken(function (token) {
+        return new Promise(function (resolve, reject) {
 
-            formdata.token = token;
-            formdata.app_secret = _this.secret;
+            _this.getToken(function (token) {
 
-            var options = {
-                url: _this.host + url,
-                method: post,
-                body: JSON.stringify(formdata),
-                headers: { "content-type": "application/json"}
-            };
+                formdata.token = token;
+                formdata.app_secret = _this.secret;
 
-            request(options, function (error, response, body) {
+                var options = {
+                    url: _this.host + url,
+                    method: post,
+                    body: JSON.stringify(formdata),
+                    headers: { "content-type": "application/json"}
+                };
 
-                if (error) throw new Error(error);
+                request(options, function (error, response, body) {
 
-                result = JSON.parse(body);
+                    if (error) {
+                        reject(new Error(error));
+                        return;
+                    }
 
-                console.log("notif send!");
+                    console.log("notif send!");
 
-                console.log(result);
+                    result = JSON.parse(body);
 
-            }).auth(_this.id, _this.secret, false);
+                    resolve(result);
+
+                }).auth(_this.id, _this.secret, false);
+
+            });
 
         });
 
