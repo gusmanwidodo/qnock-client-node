@@ -60,9 +60,7 @@ function qnock (options) {
 
                     console.log("notif send!");
 
-                    result = JSON.parse(body);
-
-                    resolve(result);
+                    resolve(body);
 
                 }).auth(_this.id, _this.secret, false);
 
